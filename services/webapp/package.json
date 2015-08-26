@@ -1,0 +1,15 @@
+{
+  "name": "webapp",
+  "version": "0.0.1",
+  "description": "Simple web application displaying the virtualhost name",
+  "author": "Sander van der Burg",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "4.x.x",
+    "ejs": "2.3.x"
+  },
+  "bin": {
+    "webapp": "app.js"
+  }
+}
