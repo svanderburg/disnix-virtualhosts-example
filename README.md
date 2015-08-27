@@ -7,7 +7,7 @@ them to the corresponding machines with Disnix.
 
 Architecture
 ============
-![A virtualhosts deployment(doc/deployment.png)
+![A virtualhosts deployment](doc/deployment.png)
 
 With this example you can automatically set up deployments as shown in the figure
 above. We have two kinds of services:
