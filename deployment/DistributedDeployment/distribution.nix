@@ -1,7 +1,8 @@
 {infrastructure}:
 
 let
-  inherit (builtins) listToAttrs attrNames getAttr;
+  inherit (builtins) listToAttrs attrNames getAttr removeAttrs;
+  productionTargets = removeAttrs infrastructure [ "client" ]; # Do not distribute a proxy to the test client
 in
 {
   webapp1 = [ infrastructure.test1 ];
@@ -10,9 +11,9 @@ in
   webapp4 = [ infrastructure.test2 ];
 } //
 
-# To each target, distribute a reverse proxy
+# To each target (except the test client machine), distribute a reverse proxy
 
 listToAttrs (map (targetName: {
   name = "nginx-wrapper-${targetName}";
   value = [ (getAttr targetName infrastructure) ];
-}) (attrNames infrastructure))
+}) (attrNames productionTargets))

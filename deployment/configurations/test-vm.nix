@@ -4,6 +4,7 @@
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 80 ];
   services.disnix.enable = true;
+  services.openssh.enable = true;
   
   environment.systemPackages = [
     pkgs.w3m
