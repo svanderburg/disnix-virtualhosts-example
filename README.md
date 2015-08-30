@@ -2,7 +2,7 @@ disnix-virtualhosts-example
 ===========================
 This is an example deploying a collection web applications and a reverse proxy
 that support multiple virtual hosts. The purpose of this example is to
-demonstrate how we can dynamically create host-specific services and deploy
+demonstrate how we can dynamically create target-specific services and deploy
 them to the corresponding machines with Disnix.
 
 Architecture
@@ -21,13 +21,13 @@ the same structure regardless to which machines they are deployed in the network
 In some cases, however, it may also be desirable to define services that are
 configured for a specific target machines.
 
-In this example, the reverse proxies are services having a *host-specific*
+In this example, the reverse proxies are services having a *target-specific*
 configuration -- their configurations are specifically optimised for the machine
 to which they have been deployed. For example, the `nginx` reverse proxy on
 machine `test1` only knows about the web application that have been deployed to
 it.
 
-The advantage of deploying host-specific components is that they will prevent
+The advantage of deploying target-specific components is that they will prevent
 expensive redeployments in case of an upgrade. For example, if a change has been
 to `test2`'s configuration, then `test1` should not be affected.
 
