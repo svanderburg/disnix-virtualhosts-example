@@ -55,7 +55,7 @@ let
         testScript =
           ''
             # Wait for a while and capture the output of the entry page
-            my $result = $test3->mustSucceed("sleep 30; curl --fail -H 'Host: webapp2.local' http://test1");
+            my $result = $client->mustSucceed("sleep 30; curl --fail -H 'Host: webapp2.local' http://test1");
             
             # The entry page should contain webapp2 :-)
             
