@@ -6,7 +6,7 @@ let
   self = {
     webapp = (import ../../services/webapp {
       inherit system pkgs;
-    }).build;
+    }).package;
     
     webappwrapper = callPackage ../pkgs/webapp/wrapper.nix { };
   
