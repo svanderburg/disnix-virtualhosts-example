@@ -109,14 +109,20 @@ with reverse proxies.
 Edit `services-dynamic.nix` and change the line:
 
 ```nix
-numbers = pkgs.lib.range 1 4;
+let
+  ...
+  numbers = pkgs.lib.range 1 4;
+in
 ```
 
 into a desired range. For example, to deploy 20 instances of the webapp, we
 can change it into:
 
 ```nix
-numbers = pkgs.lib.range 1 20;
+let
+  ...
+  numbers = pkgs.lib.range 1 20;
+in
 ```
 
 We can use the `dydisnix-gendist` tool from the
@@ -132,7 +138,15 @@ the infrastructure model, each target states that it has a capacity of hosting
 10 services:
 
 ```nix
-capacity = 10;
+{
+  test1 = {
+    properties = {
+      capacity = 10;
+      ...
+    };
+  };
+  ...
+}
 ```
 
 After generating the distribution model, we must assign unique TCP port numbers
