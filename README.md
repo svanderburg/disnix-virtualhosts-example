@@ -97,6 +97,61 @@ run:
 
 Subsitute `webapp2.local` with the desired virtual hostname.
 
+A more advanced use case
+========================
+The previously described use cases only deploy two reverse proxies and four web
+application instances attached to them.
+
+We can also do the same thing on a large scale by *dynamically* composing as
+many web application variants as we want and dynamically map them to machines
+with reverse proxies.
+
+Edit `services-dynamic.nix` and change the line:
+
+```nix
+numbers = pkgs.lib.range 1 4;
+```
+
+into a desired range. For example, to deploy 20 instances of the webapp, we
+can change it into:
+
+```nix
+numbers = pkgs.lib.range 1 20;
+```
+
+We can use the `dydisnix-gendist` tool from the
+[Dynamic Disnix](https://github.com/svanderburg/dydisnix) toolset to generate a
+distribution model that map our 20 services to the machines in the
+infrastructure model:
+
+    $ distribution=$(dydisnix-gendist -s services-dynamic.nix -i infrastructure.nix -q qos.nix)
+
+The above command-line instruction uses a QoS model that distributes the
+services to each target in the distribution model using a greedy strategy. In
+the infrastructure model, each target states that it has a capacity of hosting
+10 services:
+
+```nix
+capacity = 10;
+```
+
+After generating the distribution model, we must assign unique TCP port numbers
+to each service so that they can be properly reached. We can automatically
+assign them by running:
+
+    $ dydisnix-port-assign -s services.nix -i infrastructure.nix -d $distribution > ports2.nix
+
+and replace the original ports specification by running:
+
+    $ mv ports2.nix ports.nix
+
+Finally, we can deploy the dynamically composed configuration:
+
+    $ disnix-env -s services-dynamic.nix -i infrastructure.nix -d $distribution
+
+After the above command succeeds, we have two machines each hosting 10 web
+applications with reverse proxies in front of them.
+
 License
 =======
 This package is released under the [MIT license](http://opensource.org/licenses/MIT).
