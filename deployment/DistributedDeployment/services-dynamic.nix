@@ -18,7 +18,7 @@ in
 pkgs.lib.genAttrs webappNames (name: rec {
   inherit name;
   dnsName = "${name}.local";
-  pkg = customPkgs.webappwrapper { inherit port; };
+  pkg = customPkgs.webappwrapper { inherit name port; };
   type = "process";
   portAssign = "shared";
   port = portsConfiguration.ports."${name}" or 0;

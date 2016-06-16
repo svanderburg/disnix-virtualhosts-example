@@ -1,8 +1,8 @@
 {stdenv, webapp}:
-{port}:
+{port, name}:
 
 stdenv.mkDerivation {
-  name = "webapp-wrapper";
+  name = "${name}-wrapper";
   buildCommand = ''
     mkdir -p $out/bin
     cat > $out/bin/run-webapp <<EOF

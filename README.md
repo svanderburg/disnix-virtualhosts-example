@@ -153,7 +153,7 @@ After generating the distribution model, we must assign unique TCP port numbers
 to each service so that they can be properly reached. We can automatically
 assign them by running:
 
-    $ dydisnix-port-assign -s services.nix -i infrastructure.nix -d $distribution > ports2.nix
+    $ dydisnix-port-assign -s services-dynamic.nix -i infrastructure.nix -d $distribution > ports2.nix
 
 and replace the original ports specification by running:
 

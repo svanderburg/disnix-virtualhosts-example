@@ -11,7 +11,7 @@ in
   webapp1 = rec {
     name = "webapp1";
     dnsName = "webapp1.local";
-    pkg = customPkgs.webappwrapper { inherit port; };
+    pkg = customPkgs.webappwrapper { inherit name port; };
     type = "process";
     portAssign = "shared";
     port = portsConfiguration.ports.webapp1 or 0;
@@ -20,7 +20,7 @@ in
   webapp2 = rec {
     name = "webapp2";
     dnsName = "webapp2.local";
-    pkg = customPkgs.webappwrapper { inherit port; };
+    pkg = customPkgs.webappwrapper { inherit name port; };
     type = "process";
     portAssign = "shared";
     port = portsConfiguration.ports.webapp2 or 0;
@@ -29,7 +29,7 @@ in
   webapp3 = rec {
     name = "webapp3";
     dnsName = "webapp3.local";
-    pkg = customPkgs.webappwrapper { inherit port; };
+    pkg = customPkgs.webappwrapper { inherit name port; };
     type = "process";
     portAssign = "shared";
     port = portsConfiguration.ports.webapp3 or 0;
@@ -38,7 +38,7 @@ in
   webapp4 = rec {
     name = "webapp4";
     dnsName = "webapp4.local";
-    pkg = customPkgs.webappwrapper { inherit port; };
+    pkg = customPkgs.webappwrapper { inherit name port; };
     type = "process";
     portAssign = "shared";
     port = portsConfiguration.ports.webapp4 or 0;
