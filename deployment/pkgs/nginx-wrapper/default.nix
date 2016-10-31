@@ -49,6 +49,17 @@ stdenv.mkDerivation {
         ''
       ) (builtins.attrNames interDeps)}
       
+      # Fallback virtual host displaying an error page. This is what users see
+      # if they connect to a non-deployed web application.
+      # Without it, nginx redirects to the first available virtual host, giving
+      # unpredictable results. This could happen while an upgrade is in progress.
+      
+      server {
+        listen 80;
+        server_name aaaa;
+        root ${./errorpage};
+      }
+      
       ${stdenv.lib.concatMapStrings (serviceName:
         let
           service = builtins.getAttr serviceName interDeps;

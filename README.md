@@ -12,8 +12,10 @@ Architecture
 With this example you can automatically set up deployments as shown in the figure
 above. We have two kinds of services:
 
-* Web applications returning their virtual host name (their names are prefixed with `webapp`)
-* An nginx reverse proxy per machine forwarding requests to the web applications that are deployed to the machine
+* Web applications returning their virtual host name (their names are prefixed
+  with `webapp`)
+* An nginx reverse proxy per machine forwarding requests to the web applications
+  that are deployed to the machine
 
 In general, services in Disnix are independendent units of deployment that have
 the same structure regardless to which machines they are deployed in the network.
@@ -96,6 +98,11 @@ run:
     $ curl -H 'Host: webapp2.local' http://test1
 
 Subsitute `webapp2.local` with the desired virtual hostname.
+
+What you will also notice is that if you request a non-existent web application
+on a specific-machine, it will return an error page:
+
+    $ curl -H 'Host: nonexistent.local' http://test1
 
 A more advanced use case
 ========================
