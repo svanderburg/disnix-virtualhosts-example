@@ -7,7 +7,7 @@
   "private": true,
   "dependencies": {
     "express": "4.x.x",
-    "ejs": "2.3.x"
+    "ejs": "2.6.x"
   },
   "bin": {
     "webapp": "app.js"

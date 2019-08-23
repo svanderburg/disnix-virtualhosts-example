@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-var path = require('path');
-var express = require('express');
+const path = require('path');
+const express = require('express');
 
-var app = express();
+const app = express();
 
 // Configure express to use ejs as template engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, "views"));
 
 // Determine port number to listen on
-var port = process.env["PORT"] || 3000;
+const port = process.env["PORT"] || 3000;
 
 // Dynamic URL routes
 
