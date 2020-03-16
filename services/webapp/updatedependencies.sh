@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-node2nix --nodejs-10
+node2nix --nodejs-12
