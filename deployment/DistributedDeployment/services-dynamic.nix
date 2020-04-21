@@ -1,29 +1,56 @@
-{system, pkgs, distribution, invDistribution}:
+{ system, pkgs, distribution, invDistribution
+, stateDir ? "/var"
+, runtimeDir ? "${stateDir}/run"
+, logDir ? "${stateDir}/log"
+, cacheDir ? "${stateDir}/cache"
+, tmpDir ? (if stateDir == "/var" then "/tmp" else "${stateDir}/tmp")
+, forceDisableUserChange ? false
+, processManager ? "systemd"
+}:
 
 let
   customPkgs = import ../top-level/all-packages.nix {
-    inherit pkgs system;
+    inherit pkgs system stateDir logDir runtimeDir tmpDir forceDisableUserChange processManager;
   };
-  
+
+  sharedConstructors = import ../../../nix-processmgmt/examples/services-agnostic/constructors.nix {
+    inherit pkgs stateDir logDir runtimeDir cacheDir tmpDir forceDisableUserChange processManager;
+  };
+
+  processType =
+    if processManager == null then "managed-process"
+    else if processManager == "sysvinit" then "sysvinit-script"
+    else if processManager == "systemd" then "systemd-unit"
+    else if processManager == "supervisord" then "supervisord-program"
+    else if processManager == "bsdrc" then "bsdrc-script"
+    else if processManager == "cygrunsrv" then "cygrunsrv-service"
+    else if processManager == "launchd" then "launchd-daemon"
+    else throw "Unknown process manager: ${processManager}";
+
   portsConfiguration = if builtins.pathExists ./ports.nix then import ./ports.nix else {};
-  
+
   # Adjust this function invocation to increase the number of services to be deployed
   numbers = pkgs.lib.range 1 4;
-  
-  webappNames = map (value: "webapp${toString value}") numbers;
+
+  webappSuffixes = map (value: toString value) numbers;
 in
 
 # Generate a predefined number of web application services
 
-pkgs.lib.genAttrs webappNames (name: rec {
-  inherit name;
-  dnsName = "${name}.local";
-  pkg = customPkgs.webappwrapper { inherit name port; };
-  type = "process";
-  portAssign = "shared";
-  port = portsConfiguration.ports."${name}" or 0;
-  weight = 1;
-})
+builtins.listToAttrs (map (instanceSuffix: {
+  name = "webapp${instanceSuffix}";
+  value = rec {
+    name = "webapp${instanceSuffix}";
+    dnsName = "${name}.local";
+    pkg = customPkgs.webappwrapper {
+      inherit port instanceSuffix;
+    };
+    type = processType;
+    portAssign = "shared";
+    port = portsConfiguration.ports."${name}" or 0;
+    weight = 1;
+  };
+}) webappSuffixes)
 
 //
 
@@ -31,14 +58,14 @@ pkgs.lib.genAttrs webappNames (name: rec {
 
 builtins.listToAttrs (map (targetName:
   let
-    serviceName = "nginx-wrapper-${targetName}";
+    serviceName = "nginx-reverse-proxy-${targetName}";
   in
   { name = serviceName;
     value = {
       name = serviceName;
-      pkg = customPkgs.nginx-wrapper;
+      pkg = sharedConstructors.nginxReverseProxyHostBased {};
       dependsOn = builtins.removeAttrs ((builtins.getAttr targetName invDistribution).services) [ serviceName ]; # The reverse proxy depends on all services distributed to the same machine, except itself (of course)
-      type = "wrapper";
+      type = processType;
     };
   }
 ) (builtins.attrNames invDistribution))

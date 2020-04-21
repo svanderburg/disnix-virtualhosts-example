@@ -14,6 +14,6 @@ in
 # To each target (except the test client machine), distribute a reverse proxy
 
 listToAttrs (map (targetName: {
-  name = "nginx-wrapper-${targetName}";
+  name = "nginx-reverse-proxy-${targetName}";
   value = [ (getAttr targetName infrastructure) ];
 }) (attrNames productionTargets))
