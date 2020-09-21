@@ -6,9 +6,12 @@
 , tmpDir ? (if stateDir == "/var" then "/tmp" else "${stateDir}/tmp")
 , forceDisableUserChange ? false
 , processManager ? "systemd"
+, numOfServices ? 10
 }:
 
 let
+  ids = if builtins.pathExists ./ids.nix then (import ./ids.nix).ids else {};
+
   customPkgs = import ../top-level/all-packages.nix {
     inherit pkgs system stateDir logDir runtimeDir tmpDir forceDisableUserChange processManager;
   };
@@ -21,10 +24,7 @@ let
     inherit processManager;
   };
 
-  portsConfiguration = if builtins.pathExists ./ports.nix then import ./ports.nix else {};
-
-  # Adjust this function invocation to increase the number of services to be deployed
-  numbers = pkgs.lib.range 1 4;
+  numbers = pkgs.lib.range 1 numOfServices;
 
   webappSuffixes = map (value: toString value) numbers;
 in
@@ -36,13 +36,13 @@ builtins.listToAttrs (map (instanceSuffix: {
   value = rec {
     name = "webapp${instanceSuffix}";
     dnsName = "${name}.local";
+    port = ids.ports."${name}" or 0;
     pkg = customPkgs.webappwrapper {
       inherit port instanceSuffix;
     };
     type = processType;
-    portAssign = "shared";
-    port = portsConfiguration.ports."${name}" or 0;
     weight = 1;
+    requiresUniqueIdsFor = [ "webappPorts" "uids" "gids" ];
   };
 }) webappSuffixes)
 
@@ -57,7 +57,9 @@ builtins.listToAttrs (map (targetName:
   { name = serviceName;
     value = {
       name = serviceName;
-      pkg = sharedConstructors.nginxReverseProxyHostBased {};
+      pkg = sharedConstructors.nginxReverseProxyHostBased {
+        port = 80;
+      };
       dependsOn = builtins.removeAttrs ((builtins.getAttr targetName invDistribution).services) [ serviceName ]; # The reverse proxy depends on all services distributed to the same machine, except itself (of course)
       type = processType;
     };
