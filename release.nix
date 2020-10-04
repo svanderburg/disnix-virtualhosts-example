@@ -1,5 +1,6 @@
 { nixpkgs ? <nixpkgs>
 , disnix_virtualhosts_example ? {outPath = ./.; rev = 1234;}
+, nix-processmgmt ? { outPath = ../nix-processmgmt; rev = 1234; }
 , officialRelease ? false
 , systems ? [ "i686-linux" "x86_64-linux" ]
 }:
@@ -34,6 +35,9 @@ let
         servicesFile = "deployment/DistributedDeployment/services.nix";
         networkFile = "deployment/DistributedDeployment/network.nix";
         distributionFile = "deployment/DistributedDeployment/distribution.nix";
+        extraParams = {
+          inherit nix-processmgmt;
+        };
       }
     );
 
@@ -47,12 +51,14 @@ let
           # Wait for a while and capture the output of the entry page
           result = client.succeed("sleep 30; curl --fail -H 'Host: webapp2.local' http://test1")
 
-          # The entry page should contain webapp2 :-)
+          # The entry page should contain webapp3001 :-)
 
-          if "webapp2" in result:
-              print("Entry page contains webapp2!")
+          if "webapp3001" in result:
+              print("Entry page contains webapp3001!")
           else:
-              raise Exception("Entry page should contain webapp2!")
+              raise Exception(
+                  "Entry page should contain webapp3001! Result is: {}".format(result)
+              )
         '';
     };
   };

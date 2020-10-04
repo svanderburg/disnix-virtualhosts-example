@@ -7,20 +7,21 @@
 , forceDisableUserChange ? false
 , processManager ? "systemd"
 , numOfServices ? 10
+, nix-processmgmt ? ../../../nix-processmgmt
 }:
 
 let
   ids = if builtins.pathExists ./ids.nix then (import ./ids.nix).ids else {};
 
   customPkgs = import ../top-level/all-packages.nix {
-    inherit pkgs system stateDir logDir runtimeDir tmpDir forceDisableUserChange processManager;
+    inherit pkgs system stateDir logDir runtimeDir tmpDir forceDisableUserChange processManager nix-processmgmt;
   };
 
-  sharedConstructors = import ../../../nix-processmgmt/examples/services-agnostic/constructors.nix {
+  sharedConstructors = import "${nix-processmgmt}/examples/services-agnostic/constructors.nix" {
     inherit pkgs stateDir logDir runtimeDir cacheDir tmpDir forceDisableUserChange processManager;
   };
 
-  processType = import ../../../nix-processmgmt/nixproc/derive-dysnomia-process-type.nix {
+  processType = import "${nix-processmgmt}/nixproc/derive-dysnomia-process-type.nix" {
     inherit processManager;
   };
 
