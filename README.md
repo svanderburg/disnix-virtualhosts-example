@@ -33,6 +33,12 @@ The advantage of deploying target-specific components is that they will prevent
 expensive redeployments in case of an upgrade. For example, if a change has been
 to `test2`'s configuration, then `test1` should not be affected.
 
+Prerequisites
+=============
+To deploy this example system, you need a checkout of the
+[Nix process management framework](https://github.com/svanderburg) in the same
+base directory.
+
 Usage
 =====
 The `deployment/DistributedDeployment` sub folder contains all neccessary Disnix
