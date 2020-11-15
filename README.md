@@ -54,24 +54,9 @@ network and the distribution model to map the services to the right machines.
 
 The system can be deployed by running the following command:
 
-    $ disnix-env -s services.nix -i infrastructure.nix -d distribution.nix
-
-Hybrid deployment of NixOS infrastructure and services using DisnixOS
----------------------------------------------------------------------
-For this scenario you need to install a network of NixOS machines, running the
-Disnix service. This can be done by enabling the following configuration
-option in each `/etc/nixos/configuration.nix` file:
-
-    services.disnix.enable = true;
-
-You may also need to adapt the NixOS configurations to which the `network.nix`
-model is referring, so that they will match the actual system configurations.
-
-The system including its underlying infrastructure can be deployed by using the
-`disnixos-env` command. The following instruction deploys the system including
-the underlying infrastructure.
-
-    $ disnixos-env -s services.nix -n network.nix -d distribution.nix
+```bash
+$ disnix-env -s services.nix -i infrastructure.nix -d distribution.nix
+```
 
 Deployment using the NixOS test driver
 --------------------------------------
@@ -79,7 +64,9 @@ This system can be deployed without adapting any of the models in
 `deployment/DistributedDeployment`. By running the following instruction, the
 variant without the proxy can be deployed in a network of virtual machines:
 
-    $ disnixos-vm-env -s services.nix -n network.nix -d distribution.nix
+```bash
+$ disnixos-vm-env -s services.nix -n network.nix -d distribution.nix
+```
 
 Deployment using NixOps for infrastructure and Disnix for service deployment
 ----------------------------------------------------------------------------
@@ -88,27 +75,35 @@ let Disnix do the deployment of the services to these machines.
 
 A virtualbox network can be deployed as follows:
 
-    $ nixops create ./network.nix ./network-virtualbox.nix -d vboxtest
-    $ nixops deploy -d vboxtest
+```bash
+$ nixops create ./network.nix ./network-virtualbox.nix -d vboxtest
+$ nixops deploy -d vboxtest
+```
 
 The services can be deployed by running the following commands:
 
-    $ export NIXOPS_DEPLOYMENT=vboxtest
-    $ disnixos-env -s services.nix -n network.nix -d distribution.nix --use-nixops
+```bash
+$ export NIXOPS_DEPLOYMENT=vboxtest
+$ disnixos-env -s services.nix -n network.nix -d distribution.nix --use-nixops
+```
 
 Running the system
 ==================
 After the system has been deployed, open a terminal on the third machine and
 run:
 
-    $ curl -H 'Host: webapp2.local' http://test1
+```bash
+$ curl -H 'Host: webapp2.local' http://test1
+```
 
 Subsitute `webapp2.local` with the desired virtual hostname.
 
 What you will also notice is that if you request a non-existent web application
 on a specific-machine, it will return an error page:
 
-    $ curl -H 'Host: nonexistent.local' http://test1
+```bash
+$ curl -H 'Host: nonexistent.local' http://test1
+```
 
 A more advanced use case
 ========================
@@ -143,7 +138,9 @@ We can use the `dydisnix-gendist` tool from the
 distribution model that map our 20 services to the machines in the
 infrastructure model:
 
-    $ distribution=$(dydisnix-gendist -s services-dynamic.nix -i infrastructure.nix -q qos.nix)
+```bash
+$ distribution=$(dydisnix-gendist -s services-dynamic.nix -i infrastructure.nix -q qos.nix)
+```
 
 The above command-line instruction uses a QoS model that distributes the
 services to each target in the distribution model using a greedy strategy. In
@@ -166,15 +163,15 @@ After generating the distribution model, we must assign unique TCP port numbers
 to each service so that they can be properly reached. We can automatically
 assign them by running:
 
-    $ dydisnix-port-assign -s services-dynamic.nix -i infrastructure.nix -d $distribution > ports2.nix
-
-and replace the original ports specification by running:
-
-    $ mv ports2.nix ports.nix
+```bash
+$ dydisnix-id-assign -s services-dynamic.nix -i infrastructure.nix -d $distribution --id-resources idresources.nix --ids ids.nix --output-file ids.nix
+```
 
 Finally, we can deploy the dynamically composed configuration:
 
-    $ disnix-env -s services-dynamic.nix -i infrastructure.nix -d $distribution
+```bash
+$ disnix-env -s services-dynamic.nix -i infrastructure.nix -d $distribution
+```
 
 After the above command succeeds, we have two machines each hosting 10 web
 applications with reverse proxies in front of them.
