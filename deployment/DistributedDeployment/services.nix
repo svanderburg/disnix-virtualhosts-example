@@ -3,10 +3,12 @@
 , runtimeDir ? "${stateDir}/run"
 , logDir ? "${stateDir}/log"
 , cacheDir ? "${stateDir}/cache"
+, spoolDir ? "${stateDir}/spool"
 , tmpDir ? (if stateDir == "/var" then "/tmp" else "${stateDir}/tmp")
 , forceDisableUserChange ? false
 , processManager ? "systemd"
 , nix-processmgmt ? ../../../nix-processmgmt
+, nix-processmgmt-services ? ../../../nix-processmgmt-services
 }:
 
 let
@@ -16,8 +18,8 @@ let
     inherit pkgs system stateDir logDir runtimeDir tmpDir forceDisableUserChange processManager ids nix-processmgmt;
   };
 
-  sharedConstructors = import "${nix-processmgmt}/examples/services-agnostic/constructors.nix" {
-    inherit pkgs stateDir logDir runtimeDir cacheDir tmpDir forceDisableUserChange processManager;
+  sharedConstructors = import "${nix-processmgmt-services}/services-agnostic/constructors.nix" {
+    inherit nix-processmgmt pkgs stateDir logDir runtimeDir cacheDir spoolDir tmpDir forceDisableUserChange processManager;
   };
 
   processType = import "${nix-processmgmt}/nixproc/derive-dysnomia-process-type.nix" {

@@ -1,14 +1,13 @@
 {createManagedProcess, webapp}:
-{port, instanceSuffix ? ""}:
+{port, instanceSuffix ? "", instanceName ? "webapp${instanceSuffix}"}:
 
 let
-  instanceName = "webapp${instanceSuffix}";
   user = instanceName;
   group = instanceName;
 in
 createManagedProcess {
-  name = instanceName;
   inherit instanceName;
+
   description = "Simple Node.js web application";
   foregroundProcess = "${webapp}/lib/node_modules/webapp/app.js";
   environment = {
