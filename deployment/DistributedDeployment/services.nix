@@ -4,6 +4,7 @@
 , logDir ? "${stateDir}/log"
 , cacheDir ? "${stateDir}/cache"
 , spoolDir ? "${stateDir}/spool"
+, libDir ? "${stateDir}/lib"
 , tmpDir ? (if stateDir == "/var" then "/tmp" else "${stateDir}/tmp")
 , forceDisableUserChange ? false
 , processManager ? "systemd"
@@ -19,7 +20,7 @@ let
   };
 
   sharedConstructors = import "${nix-processmgmt-services}/services-agnostic/constructors.nix" {
-    inherit nix-processmgmt pkgs stateDir logDir runtimeDir cacheDir spoolDir tmpDir forceDisableUserChange processManager;
+    inherit nix-processmgmt pkgs stateDir logDir runtimeDir cacheDir spoolDir libDir tmpDir forceDisableUserChange processManager;
   };
 
   processType = import "${nix-processmgmt}/nixproc/derive-dysnomia-process-type.nix" {
