@@ -13,12 +13,4 @@
   environment.systemPackages = [
     pkgs.w3m
   ];
-
-  users.extraGroups = {
-    nginx = { gid = 60; };
-  };
-
-  users.extraUsers = {
-    nginx = { group = "nginx"; uid = 60; };
-  };
 }
